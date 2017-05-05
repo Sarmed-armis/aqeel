@@ -24,10 +24,11 @@
           <!-- Messages: style can be found in dropdown.less-->
 
           <!-- User Account: style can be found in dropdown.less -->
+          @if(Auth::user()->tech==0)
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img src="dist/img/profile-icon.png" class="user-image" alt="User Image">
-              <span class="hidden-xs">{{Auth::user()->name}}</span>
+              <span class="hidden-xs">{{Auth::user()->nam}}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
@@ -50,8 +51,11 @@
 
 
                 </div>
+                </div>
+
                 <!-- /.row -->
               </li>
+
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
@@ -66,6 +70,7 @@
                                         </form>
                 </div>
               </li>
+        @endif
 
       </div>
     </nav>
@@ -194,7 +199,7 @@ use App\Company;
                               <tr>
 
 <td>
-  @if(Auth::user()->tech==0)
+  @if(Auth::user()->tech==0 && Auth::user()->agree==1)
     <input type="hidden" id="token" value="{{ csrf_token() }}">
 <button id="{{$company->id}}"class="btn btn-primary getJob">تقديم</button>
     @endif

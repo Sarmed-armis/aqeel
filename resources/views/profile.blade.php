@@ -26,13 +26,13 @@
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="dist/img/profile-icon.png" class="user-image" alt="User Image">
+              <img src="image/{{Auth::user()->image}}" class="user-image" alt="User Image">
               <span class="hidden-xs">{{Auth::user()->name}}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img src="dist/img/profile-icon.png" class="img-circle" alt="User Image">
+                <img src="image/{{Auth::user()->image}}"  class="img-circle" alt="User Image">
 
                 <p>
                   {{Auth::user()->name}} -  المتدرب
@@ -81,26 +81,22 @@
       <!-- Sidebar user panel -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img src="dist/img/profile-icon.png" class="img-circle" alt="User Image">
+          <img src="image/{{Auth::user()->image}}" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
           <p>{{auth::user()->name}}</p>
-          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+
         </div>
       </div>
       <!-- search form -->
-      <form action="#" method="get" class="sidebar-form">
-        <div class="input-group">
-          <input type="text" name="q" class="form-control" placeholder="Search...">
-              <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                </button>
-              </span>
-        </div>
-      </form>
+
       <!-- /.search form -->
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu">
+        <div class="pull-left info ">
+
+
+        </div>
 
 
 
@@ -130,20 +126,31 @@
           <!-- Profile Image -->
           <div class="box box-primary">
             <div class="box-body box-profile">
-              <img class="profile-user-img img-responsive img-circle" src="../../dist/img/profile-icon.png" alt="User profile picture">
+              <img class="profile-user-img img-responsive img-circle" src="image/{{Auth::user()->image}}" alt="User profile picture">
 
               <h3 class="profile-username text-center">{{auth::user()->name}}</h3>
 
               <p class="text-muted text-center">التخصص</p>
+<?php
+ use App\job as jobModel;
+ $job=jobModel::where('user_id',Auth::user()->id)->count();
+ if($job>0){
+     $result=1;
+ }
+ else{
+     $result=0;
+ }
+?>
 
               <ul class="list-group list-group-unbordered">
                 <li class="list-group-item">
+@if($result)
                   <b>{{Auth::user()->job->company->companyname}}</b> <a class="pull-right">اسم الشركه</a>
                 </li>
                 <li class="list-group-item">
                   <b> {{Auth::user()->job->company->lectname}}</b> <a class="pull-right">المشرف</a>
                 </li>
-
+@endif
               </ul>
 
 
@@ -169,8 +176,12 @@
 
               <strong><i class="fa fa-map-marker margin-r-5"></i> العنوان</strong>
 
-              <p class="text-muted">بغداد العراق</p>
+              <p class="text-muted">{{Auth::user()->GetDetails->addres}}</p>
 
+              <hr>
+              <p>العمر</p><p> {{Auth::user()->GetDetails->age}}</p>
+              <hr>
+              <p>رقم الهاتف</p><p> {{Auth::user()->GetDetails->mobile}}</p>
               <hr>
 
 
@@ -194,6 +205,7 @@
         <div class="col-md-9">
           <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
+
               <li class="active"><a href="#activity" data-toggle="tab">اخال معلومات الشخصيه</a></li>
 
             </ul>
@@ -204,11 +216,27 @@
                 <!-- /.post -->
 
                 <!-- Post -->
+                  <?php
+                  use App\Student;
 
 
 
+
+                  $Students=Student::where('userid',Auth::user()->id)->count();
+if($Students>0){
+    $result=0;
+
+}
+else{
+    $result=1;
+}
+
+
+                  ?>
+
+                @if($result)
               <div class="tab-pane" id="settings">
-                <form class="form-horizontal" method="post" action="{{url('/storeinfor')}}">
+                <form class="form-horizontal" method="post" action="{{url('/storeinfor')}}" enctype="multipart/form-data">
                     {{ csrf_field() }}
                   <div class="form-group">
                     <label for="inputName" class="col-sm-2 control-label">الاسم</label>
@@ -227,6 +255,19 @@
                     <div class="col-sm-10">
                       <input type="text" class="form-control"  name="age"id="inputName" placeholder="العمر">
                     </div>
+
+
+                  </div>
+                  <div class="form-group">
+                    <label for="inputName"  class="col-sm-2 control-label">الرمز</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control"  name="code"id="inputName" placeholder="الرمز">
+                  </div>
+                  </div>
+
+                  <div class="form-group">
+                    <lable>صوره </lable>
+                    <input type="file" name="image">
                   </div>
 <hr />
 
@@ -261,81 +302,23 @@
 
               </div>
               <!-- /.tab-pane -->
-
+@endif
             </div>
             <!-- /.tab-content -->
           </div>
 
           <!-- /.nav-tabs-custom -->
         </div>
-        <!-- /.col -->
+
       </div>
 
 
-  <!-- /.row -->
-
-            <!-- /.nav-tabs-custom -->
-  <?php
-use App\Student;
-
-use App\User;
-
-
-   $Students=Student::where('userid',Auth::user()->id)->get();
-
-
-
-   ?>
-            <!-- /.box (chat box) -->
-
-            <!-- TO DO List -->
-
-
-              <table id="example2" class="table table-bordered table-hover RED">
-                            <thead>
-                            <tr>
-
-                      <th>
-                        العنوان
-                      </th>
-                      <th>العمر</th>
-                      <th>رقم الهاتف</th>
-                      <th>الاسم</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @if($Students !=null)
-                              @foreach ($Students as $Student)
-
-                                <tr>
 
 
 
 
 
-                                        <td>{{$Student->addres}}</td>
-                                        <td>{{$Student->age}}</td>
-
-                                            <td>{{$Student->mobile}}</td>
-
-
-                                                      <td>  {{$Student->name}}  </td>
-
-                                </tr>
-
-                              @endforeach
-@endif
-    </tbody>
-
-
-  </table>
-
-
-
-
-
-
-
+</div>
     </section>
     <!-- /.content -->
 

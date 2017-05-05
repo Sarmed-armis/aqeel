@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Auth;
+use App\user as userModel;
 use App\Job as jobModel;
 use App\Company as companyModel;
 
@@ -46,6 +47,17 @@ class CompanyController extends Controller
 
             return "the user have job";
         }
+
+    }
+
+
+    public function agreeUser(Request $request){
+
+$user=userModel::find($request->input('id'));
+$user->agree=1;
+$user->save();
+return 'success';
+
 
     }
 }

@@ -32,4 +32,9 @@ class User extends Authenticatable
         return $this->hasOne('App\Job','user_id','id');
     }
 
+    public function  GetDetails(){
+
+        return $this->hasOne('App\Student','userid','id');
+    }
+
 }

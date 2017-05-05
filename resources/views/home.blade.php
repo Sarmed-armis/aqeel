@@ -24,6 +24,7 @@
           <!-- Messages: style can be found in dropdown.less-->
 
           <!-- User Account: style can be found in dropdown.less -->
+
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img src="dist/img/profile-icon.png" class="user-image" alt="User Image">
@@ -55,7 +56,9 @@
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
+                  @if(Auth::user()->tech==0)
                   <a href="{{url('profile')}}" class="btn btn-default btn-flat">الصفحه الشخصيه</a>
+                    @endif
                 </div>
                 <div class="pull-right">
       <a href="{{ url('/logout') }}" class="btn btn-default btn-flat"onclick="event.preventDefault();
@@ -85,6 +88,8 @@
         </div>
         <div class="pull-left info">
           <p>{{auth::user()->name}}</p>
+
+
           <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
         </div>
       </div>
@@ -126,20 +131,28 @@
     <section class="content">
       <!-- Small boxes (Stat box) -->
       <div class="row">
+
         <div class="col-lg-3 col-xs-6">
           <!-- small box -->
+
           <div class="small-box bg-aqua">
+            @if(Auth::user()->tech==1)
             <div class="inner">
+
               <h3>150</h3>
 
               <p>اعداد المتدربين</p>
             </div>
+
             <div class="icon">
               <i class="ion ion-bag"></i>
             </div>
+            @endif
             <a href="#" class="small-box-footer">للمزيد <i class="fa fa-arrow-circle-right"></i></a>
           </div>
+
         </div>
+
         <!-- ./col -->
         <div class="col-lg-3 col-xs-6">
           <!-- small box -->
@@ -220,24 +233,61 @@
                 <i class="fa fa-arrow-circle-right"></i></button>
             </div>
           </div>
+          </div>
+          </div><?php
+            use App\user;
+            $users=user::all();
 
+            ?>
+
+ @if(Auth::user()->tech==1)
+<div class="box">
+  <div class="box-header">
+    <h1 class="box box-info text-right">تاكيد الطلاب</h1>
+  </div>
+
+  <table id="example2" class="table table-bordered table-hover">
+    <thead>
+    <tr>
+
+<th>تاكيد</th>
+      <th>الرمز</th>
+
+      <th>الحاله</th>
+
+      <th>اسم الطالب</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    @foreach($users as $user)
+      @if($user->tech==0)
+    <tr>
+      <td>
+        <input type="hidden" id="token" value="{{ csrf_token() }}">
+        <button id="{{$user->id}}"class="btn btn-primary getagree">تفعيل</button>
+      </td>
+<td>{{$user->code}}</td>
+      <td>
+        @if($user->agree==1)
+          مقيول
+          @else
+        غير مقبول
+          @endif
+      </td>
+
+      <td>
+        {{$user->name}}
+      </td>
+    </tr>
+    @endif
+      @endforeach
+    </tbody>
+  </table>
+</div>
+          @endif
         </section>
-        <!-- /.Left col -->
-        <!-- right col (We are only adding the ID to make the widgets sortable)-->
 
-              <!-- /. tools -->
-
-
-
-
-            <!-- /.box-body-->
-
-          <!-- /.box -->
-
-          <!-- solid sales graph -->
-
-
-    <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
   <footer class="main-footer">
@@ -261,38 +311,67 @@
 <!-- jQuery UI 1.11.4 -->
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-<script>
-  $.widget.bridge('uibutton', $.ui.button);
-</script>
 <!-- Bootstrap 3.3.6 -->
 <script src="bootstrap/js/bootstrap.min.js"></script>
 <!-- Morris.js charts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-<script src="plugins/morris/morris.min.js"></script>
+
 <!-- Sparkline -->
-<script src="plugins/sparkline/jquery.sparkline.min.js"></script>
-<!-- jvectormap -->
-<script src="plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-<!-- jQuery Knob Chart -->
-<script src="plugins/knob/jquery.knob.js"></script>
-<!-- daterangepicker -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
-<script src="plugins/daterangepicker/daterangepicker.js"></script>
-<!-- datepicker -->
-<script src="plugins/datepicker/bootstrap-datepicker.js"></script>
-<!-- Bootstrap WYSIHTML5 -->
-<script src="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
-<!-- Slimscroll -->
-<script src="plugins/slimScroll/jquery.slimscroll.min.js"></script>
-<!-- FastClick -->
-<script src="plugins/fastclick/fastclick.js"></script>
-<!-- AdminLTE App -->
-<script src="dist/js/app.min.js"></script>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="dist/js/pages/dashboard.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="dist/js/demo.js"></script>
+
+
+
+
+      <script src="dist/sweetalert.min.js"></script>
+      <script>
+
+          $(document).ready(function () {
+
+              $('body').on('click','.getagree',function () {
+                  var id=$(this).attr('id');
+                  var token = $('#token').val();
+                  $.ajax({
+                      type: "POST",
+                      url: 'user/agree',
+                      data: {
+                          id:id,
+                          _token: token
+                      },
+                      success: function (msg) {
+                          if (msg=='success'){
+                              swal({
+                                  title: "تم العمليه",
+                                  text: 'تم تاكيد الطالب',
+                                  type: "success",
+                                  confirmButtonText: "عوده"
+                              });
+
+                          }
+                          else{
+                              swal({
+                                  title: "حدث خطاء ما",
+                                  text: 'لم تمم العمليهٍ',
+                                  type: "error",
+                                  confirmButtonText: "عوده"
+                              });
+
+                          }
+                          setTimeout(function(){
+                              location.reload();
+                          }, 2000);
+                      },
+                      error: function (msg) {
+                          var erroes='';
+                          for(datas in msg.responseJSON){
+                              erroes+=msg.responseJSON[datas]+'</br>';
+                          }
+                          $('#error').show().html(erroes);
+                      }
+                  });
+
+              });
+
+
+          });
+      </script>
 </body>
 </html>
 @endsection

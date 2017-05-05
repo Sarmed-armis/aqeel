@@ -15,3 +15,4 @@ Route::match(['get','post'],'Companyinfo','CompanyController@index');
 Route::match(['get','post'],'Companystore','CompanystoreController@index');
 Route::post('/storeinfor','StudentController@index');
 Route::post('jobs/add','CompanyController@storeJob');
+Route::post('user/agree','CompanyController@agreeUser');
